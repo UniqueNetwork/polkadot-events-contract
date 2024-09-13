@@ -85,6 +85,8 @@ Examples are coming soon.
 
 ## Installation
 
+Node.js, yarn, and forge should be installed.
+
 ```sh
 yarn
 ```

@@ -3,7 +3,7 @@
   "scripts": {
     "compile": "npx hardhat compile --force",
     "codestyle": "prettier . --write",
-    "install": "yarn compile"
+    "install": "forge install && yarn compile"
   },
   "dependencies": {},
   "devDependencies": {

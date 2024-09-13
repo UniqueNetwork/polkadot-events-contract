@@ -6,16 +6,30 @@
       "type": "node",
       "request": "launch",
       "console": "integratedTerminal",
-      "runtimeExecutable": "yarn",
-      "runtimeArgs": ["test:hh", "${file}"]
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "hardhat",
+        "test",
+        "--no-compile",
+        "--config",
+        "./hardhat.config.ts",
+        "--network",
+        "testnet",
+        "${file}"
+      ]
     },
     {
       "name": "SCRIPT",
       "type": "node",
       "request": "launch",
       "console": "integratedTerminal",
-      "runtimeExecutable": "yarn",
-      "runtimeArgs": ["run:hh", "${file}"]
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "hardhat",
+        "run",
+        "--no-compile",
+        "${file}"
+      ]
     }
   ]
 }

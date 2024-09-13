@@ -1,7 +1,9 @@
 {
   "name": "polkadot-app-contract",
   "scripts": {
-    "codestyle": "prettier . --write"
+    "compile": "npx hardhat compile --force",
+    "codestyle": "prettier . --write",
+    "install": "yarn compile"
   },
   "dependencies": {},
   "devDependencies": {

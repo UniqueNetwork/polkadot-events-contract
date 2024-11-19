@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {UniqueV2TokenMinter, Attribute, CrossAddress} from "unique-contracts/UniqueV2TokenMinter.sol";
-import {UniqueV2CollectionMinter} from "unique-contracts/UniqueV2CollectionMinter.sol";
+import {TokenMinter, Attribute, CrossAddress, UniqueNFT} from "@unique-nft/contracts/TokenMinter.sol";
+import {CollectionMinter} from "@unique-nft/contracts/CollectionMinter.sol";
 import {Property, CollectionMode, TokenPropertyPermission, CollectionLimitValue, CollectionLimitField, CollectionNestingAndPermission} from "@unique-nft/solidity-interfaces/contracts/CollectionHelpers.sol";
-import {UniqueNFT} from "@unique-nft/solidity-interfaces/contracts/UniqueNFT.sol";
+// import {UniqueNFT} from "@unique-nft/contracts/UniqueNFT.sol";
 
 struct EventConfig {
     uint256 startTimestamp;
@@ -15,7 +15,7 @@ struct EventConfig {
     CrossAddress owner;
 }
 
-contract EventManager is UniqueV2CollectionMinter, UniqueV2TokenMinter {
+contract EventManager is CollectionMinter, TokenMinter {
     /// @notice Only one NFT per account can be minted.
     uint256 public constant ACCOUNT_TOKEN_LIMIT = 1;
 
@@ -31,7 +31,7 @@ contract EventManager is UniqueV2CollectionMinter, UniqueV2TokenMinter {
     error EventFinished();
 
     ///@dev all token properties will be mutable for collection admin
-    constructor(uint256 _collectionCreationFee) payable UniqueV2CollectionMinter(true, false, true) {
+    constructor(uint256 _collectionCreationFee) payable CollectionMinter(true, true, false) {
         s_collectionCreationFee = _collectionCreationFee;
     }
 

@@ -952,10 +952,25 @@
   dependencies:
     "@types/node" "*"
 
+"@unique-nft/contracts@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@unique-nft/contracts/-/contracts-0.0.2.tgz#915f18fc2c542030541c2887692d54bf245099e2"
+  integrity sha512-+ITrJCP0Tz3fLkh2i+attCL8mfHPXIOBp4tjZS44Xa+HOmsu7shYkSbIPf3Bcx/+DNHXAATLmT9L7efXiYAaLQ==
+  dependencies:
+    "@unique-nft/solidity-interfaces" "^1.0.1"
+
 "@unique-nft/solidity-interfaces@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@unique-nft/solidity-interfaces/-/solidity-interfaces-1.0.0.tgz#647d9d2705367c6f8a667f6212152a6a57471d91"
   integrity sha512-BuOVmZUgKqLJsbPXf7Au7Jtj2o6p/AWPG/tnrmX4KDXvnQFZZOhtcFqoM0kiC+TEcI7tF/eKUhAce/dqeYETkg==
+  dependencies:
+    "@unique-nft/utils" "^0.3.2"
+    ethers "^6.9.0"
+
+"@unique-nft/solidity-interfaces@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@unique-nft/solidity-interfaces/-/solidity-interfaces-1.0.1.tgz#6ce36c6a39a42d415c80a596172d984654de51ed"
+  integrity sha512-Ub54hvQWpNMIrMN5MJFKqxaUs4/k6ePLh7w1k2T0PfogIPXQ1tv8TcbJfJ7N+VNg5SI8aDny6TjjGSbXZcthrQ==
   dependencies:
     "@unique-nft/utils" "^0.3.2"
     ethers "^6.9.0"

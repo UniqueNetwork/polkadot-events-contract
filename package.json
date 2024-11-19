@@ -18,6 +18,7 @@
     "@types/chai": "^4.2.0",
     "@types/chai-as-promised": "^7.1.6",
     "@types/mocha": ">=9.1.0",
+    "@unique-nft/contracts": "^0.0.2",
     "@unique-nft/solidity-interfaces": "^1.0.0",
     "chai": "^4.2.0",
     "hardhat": "^2.22.10",

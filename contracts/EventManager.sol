@@ -4,7 +4,6 @@ pragma solidity ^0.8.24;
 import {TokenMinter, Attribute, CrossAddress, UniqueNFT} from "@unique-nft/contracts/TokenMinter.sol";
 import {CollectionMinter} from "@unique-nft/contracts/CollectionMinter.sol";
 import {Property, CollectionMode, TokenPropertyPermission, CollectionLimitValue, CollectionLimitField, CollectionNestingAndPermission} from "@unique-nft/solidity-interfaces/contracts/CollectionHelpers.sol";
-// import {UniqueNFT} from "@unique-nft/contracts/UniqueNFT.sol";
 
 struct EventConfig {
     uint256 startTimestamp;

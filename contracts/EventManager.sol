@@ -8,6 +8,7 @@ import {Property, CollectionMode, TokenPropertyPermission, CollectionLimitValue,
 struct EventConfig {
     uint256 startTimestamp;
     uint256 endTimestamp;
+    uint256 accountLimit;
     string collectionCoverImage;
     string tokenImage;
     Attribute[] attributes;
@@ -15,10 +16,6 @@ struct EventConfig {
 }
 
 contract EventManager is CollectionMinter, TokenMinter {
-    /// @notice Only one NFT per account can be minted.
-    uint256 public constant ACCOUNT_TOKEN_LIMIT = 1;
-
-    // TODO: do we need this fee? Should we support withdraw?
     uint256 private s_collectionCreationFee;
     mapping(address collection => EventConfig) private s_eventConfigOf;
 
@@ -45,10 +42,11 @@ contract EventManager is CollectionMinter, TokenMinter {
 
         // Set collection limits
         CollectionLimitValue[] memory collectionLimits = new CollectionLimitValue[](2);
-        // Every account can own only 1 NFT (ACCOUNT_TOKEN_LIMIT)
+
+        // Set account token ownership limit
         collectionLimits[0] = CollectionLimitValue({
             field: CollectionLimitField.AccountTokenOwnership,
-            value: ACCOUNT_TOKEN_LIMIT
+            value: _eventConfig.accountLimit
         });
 
         // if soulbound transfers are not allowed
@@ -69,7 +67,7 @@ contract EventManager is CollectionMinter, TokenMinter {
         UniqueNFT collection = UniqueNFT(collectionAddress);
 
         // Set collection sponsorship
-        // Every transaction will be paid by the EventManager
+        // All transaction fees will be covered by the EventManager (this) contract
         collection.setCollectionSponsorCross(CrossAddress({eth: address(this), sub: 0}));
         collection.confirmCollectionSponsorship();
 

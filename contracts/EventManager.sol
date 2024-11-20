@@ -4,27 +4,12 @@ pragma solidity ^0.8.24;
 import {TokenMinter, Attribute, CrossAddress, UniqueNFT} from "@unique-nft/contracts/TokenMinter.sol";
 import {CollectionMinter} from "@unique-nft/contracts/CollectionMinter.sol";
 import {Property, CollectionMode, TokenPropertyPermission, CollectionLimitValue, CollectionLimitField, CollectionNestingAndPermission} from "@unique-nft/solidity-interfaces/contracts/CollectionHelpers.sol";
+import {EventConfig} from "./EventConfig.sol";
+import {IEventManager} from "./IEventManager.sol";
 
-struct EventConfig {
-    uint256 startTimestamp;
-    uint256 endTimestamp;
-    uint256 accountLimit;
-    string collectionCoverImage;
-    string tokenImage;
-    Attribute[] attributes;
-    CrossAddress owner;
-}
-
-contract EventManager is CollectionMinter, TokenMinter {
+contract EventManager is CollectionMinter, TokenMinter, IEventManager {
     uint256 private s_collectionCreationFee;
     mapping(address collection => EventConfig) private s_eventConfigOf;
-
-    event EventCreated(uint256 collectionId, address collectionAddress);
-    event TokenClaimed(CrossAddress indexed owner, uint256 indexed colletionId, uint256 tokenId);
-
-    error InvalidCreationFee();
-    error EventNotStarted();
-    error EventFinished();
 
     ///@dev all token properties will be mutable for collection admin
     constructor(uint256 _collectionCreationFee) payable CollectionMinter(true, true, false) {
@@ -35,7 +20,6 @@ contract EventManager is CollectionMinter, TokenMinter {
         string memory _name,
         string memory _description,
         string memory _symbol,
-        bool _soulbound,
         EventConfig memory _eventConfig
     ) external payable {
         if (msg.value != s_collectionCreationFee) revert InvalidCreationFee();
@@ -50,7 +34,7 @@ contract EventManager is CollectionMinter, TokenMinter {
         });
 
         // if soulbound transfers are not allowed
-        if (_soulbound)
+        if (_eventConfig.soulbound)
             collectionLimits[1] = CollectionLimitValue({field: CollectionLimitField.TransferEnabled, value: 0});
 
         address collectionAddress = _createCollection(
@@ -71,7 +55,7 @@ contract EventManager is CollectionMinter, TokenMinter {
         collection.setCollectionSponsorCross(CrossAddress({eth: address(this), sub: 0}));
         collection.confirmCollectionSponsorship();
 
-        // Save collection event
+        // Save collection config
         EventConfig storage eventConfig = s_eventConfigOf[collectionAddress];
 
         eventConfig.startTimestamp = _eventConfig.startTimestamp;
@@ -89,8 +73,7 @@ contract EventManager is CollectionMinter, TokenMinter {
         EventConfig memory collectionEvent = s_eventConfigOf[_collectionAddress];
 
         // 1. Check if the event has started and not finished yet
-        if (block.timestamp < collectionEvent.startTimestamp) revert EventNotStarted();
-        if (block.timestamp > collectionEvent.endTimestamp) revert EventFinished();
+        if (!collectionEvent.inProgress()) revert EventIsNotInProgress();
 
         // 2. Create NFT
         uint256 tokenId = _createToken(

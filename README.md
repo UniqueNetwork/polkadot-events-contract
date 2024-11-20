@@ -90,3 +90,5 @@ Node.js, yarn, and forge should be installed.
 ```sh
 yarn
 ```
+
+## Tests

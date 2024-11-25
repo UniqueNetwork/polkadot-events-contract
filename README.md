@@ -2,9 +2,9 @@
 
 ## Demo
 
-This contract was deployed to the Opal network at address `0xd3bdE3e10D04373dFc1Ded1C68BF4F31eBB4ADa7`. Self-sponsoring is enabled, which means that the contract will cover all transaction fees.
+This contract was deployed to the Opal network at address `0x4aecf1b3a3f9ed8f2bf86a0e66955245ab38a2eb`. Self-sponsoring is enabled, which means that the contract will cover all transaction fees.
 
-One event registered. To claim NFT, use the collection address `0x17c4e6453cC49AaaAeaCa894E6d9683e00000eDa`. Check the collection and minted NFTs on the [Unique Scan](https://uniquescan.io/opal/collections/3802).
+One event registered. To claim NFT, use the collection address `0x17C4E6453Cc49aAAaeaCA894e6d9683e000011cD`. Check the collection and minted NFTs on the [Unique Scan](https://uniquescan.io/opal/collections/4557).
 
 ## API
 

@@ -1,37 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {UniqueV2TokenMinter, Attribute, CrossAddress} from "unique-contracts/UniqueV2TokenMinter.sol";
-import {UniqueV2CollectionMinter} from "unique-contracts/UniqueV2CollectionMinter.sol";
+import {TokenMinter, Attribute, CrossAddress, UniqueNFT} from "@unique-nft/contracts/TokenMinter.sol";
+import {CollectionMinter} from "@unique-nft/contracts/CollectionMinter.sol";
 import {Property, CollectionMode, TokenPropertyPermission, CollectionLimitValue, CollectionLimitField, CollectionNestingAndPermission} from "@unique-nft/solidity-interfaces/contracts/CollectionHelpers.sol";
-import {UniqueNFT} from "@unique-nft/solidity-interfaces/contracts/UniqueNFT.sol";
+import {SponsoringModeT} from "@unique-nft/solidity-interfaces/contracts/ContractHelpers.sol";
+import {EventConfig} from "./EventConfig.sol";
+import {IEventManager} from "./IEventManager.sol";
 
-struct EventConfig {
-    uint256 startTimestamp;
-    uint256 endTimestamp;
-    string collectionCoverImage;
-    string tokenImage;
-    Attribute[] attributes;
-    CrossAddress owner;
-}
-
-contract EventManager is UniqueV2CollectionMinter, UniqueV2TokenMinter {
-    /// @notice Only one NFT per account can be minted.
-    uint256 public constant ACCOUNT_TOKEN_LIMIT = 1;
-
-    // TODO: do we need this fee? Should we support withdraw?
+contract EventManager is CollectionMinter, TokenMinter, IEventManager {
     uint256 private s_collectionCreationFee;
     mapping(address collection => EventConfig) private s_eventConfigOf;
 
-    event EventCreated(uint256 collectionId, address collectionAddress);
-    event TokenClaimed(CrossAddress indexed owner, uint256 indexed colletionId, uint256 tokenId);
-
-    error InvalidCreationFee();
-    error EventNotStarted();
-    error EventFinished();
-
     ///@dev all token properties will be mutable for collection admin
-    constructor(uint256 _collectionCreationFee) payable UniqueV2CollectionMinter(true, false, true) {
+    constructor(uint256 _collectionCreationFee) payable CollectionMinter(true, true, false) {
         s_collectionCreationFee = _collectionCreationFee;
     }
 
@@ -39,22 +21,22 @@ contract EventManager is UniqueV2CollectionMinter, UniqueV2TokenMinter {
         string memory _name,
         string memory _description,
         string memory _symbol,
-        bool _soulbound,
         EventConfig memory _eventConfig
     ) external payable {
         if (msg.value != s_collectionCreationFee) revert InvalidCreationFee();
 
-        // Set collection limits
-        CollectionLimitValue[] memory collectionLimits = new CollectionLimitValue[](2);
-        // Every account can own only 1 NFT (ACCOUNT_TOKEN_LIMIT)
+        uint256 limitCount = _eventConfig.soulbound ? 2 : 1;
+        CollectionLimitValue[] memory collectionLimits = new CollectionLimitValue[](limitCount);
+
         collectionLimits[0] = CollectionLimitValue({
             field: CollectionLimitField.AccountTokenOwnership,
-            value: ACCOUNT_TOKEN_LIMIT
+            value: _eventConfig.accountLimit
         });
 
         // if soulbound transfers are not allowed
-        if (_soulbound)
+        if (_eventConfig.soulbound) {
             collectionLimits[1] = CollectionLimitValue({field: CollectionLimitField.TransferEnabled, value: 0});
+        }
 
         address collectionAddress = _createCollection(
             _name,
@@ -70,11 +52,11 @@ contract EventManager is UniqueV2CollectionMinter, UniqueV2TokenMinter {
         UniqueNFT collection = UniqueNFT(collectionAddress);
 
         // Set collection sponsorship
-        // Every transaction will be paid by the EventManager
+        // All transaction fees will be covered by the EventManager (this) contract
         collection.setCollectionSponsorCross(CrossAddress({eth: address(this), sub: 0}));
         collection.confirmCollectionSponsorship();
 
-        // Save collection event
+        // Save collection config
         EventConfig storage eventConfig = s_eventConfigOf[collectionAddress];
 
         eventConfig.startTimestamp = _eventConfig.startTimestamp;
@@ -92,8 +74,7 @@ contract EventManager is UniqueV2CollectionMinter, UniqueV2TokenMinter {
         EventConfig memory collectionEvent = s_eventConfigOf[_collectionAddress];
 
         // 1. Check if the event has started and not finished yet
-        if (block.timestamp < collectionEvent.startTimestamp) revert EventNotStarted();
-        if (block.timestamp > collectionEvent.endTimestamp) revert EventFinished();
+        if (!collectionEvent.inProgress()) revert EventIsNotInProgress();
 
         // 2. Create NFT
         uint256 tokenId = _createToken(

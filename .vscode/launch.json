@@ -14,7 +14,7 @@
         "--config",
         "./hardhat.config.ts",
         "--network",
-        "testnet",
+        "quick",
         "${file}"
       ]
     },

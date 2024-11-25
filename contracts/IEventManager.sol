@@ -6,7 +6,7 @@ import {EventConfig} from "./EventConfig.sol";
 
 interface IEventManager {
     event EventCreated(uint256 collectionId, address collectionAddress);
-    event TokenClaimed(CrossAddress indexed owner, uint256 indexed colletionId, uint256 tokenId);
+    event TokenClaimed(CrossAddress indexed owner, uint256 indexed collectionId, uint256 tokenId);
 
     error InvalidCreationFee();
     error EventIsNotInProgress();

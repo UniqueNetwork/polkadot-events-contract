@@ -41,8 +41,10 @@ This struct represents the event's configuration.
 
 - `startTimestamp`: NFT cannot be minted if `block.timestamp` < `startTimestamp`
 - `endTimestamp`: NFT cannot be minted if `block.timestamp` > `endTimestamp`
+- `accountLimit`: How many NFTs a single account may have
 - `collectionCoverImage`: URL of a collection cover image
 - `tokenImage`: URL of an NFT image. All NFTs will have the same image
+- `soulbound`: if `true` NFT cannot be transferred
 - `attributes`: NFT attributes list, see [Attributes](#attribute)
 - `owner`: Event owner. This address is a virtual owner of the event's NFT collection. Real ownership can be claimed
 
@@ -50,8 +52,10 @@ This struct represents the event's configuration.
 struct EventConfig {
   uint256 startTimestamp;
   uint256 endTimestamp;
+  uint256 accountLimit;
   string collectionCoverImage;
   string tokenImage;
+  bool soulbound;
   Attribute[] attributes;
   CrossAddress owner;
 }
@@ -61,7 +65,7 @@ struct EventConfig {
 
 #### Interface
 
-`function createCollection(string _name,string _description,string _symbol,bool _soulbound,EventConfig _eventConfig)`
+`function createCollection(string _name,string _description,string _symbol,EventConfig _eventConfig)`
 
 #### Events
 

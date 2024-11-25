@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {TokenMinter, Attribute, CrossAddress, UniqueNFT} from "@unique-nft/contracts/TokenMinter.sol";
 import {CollectionMinter} from "@unique-nft/contracts/CollectionMinter.sol";
 import {Property, CollectionMode, TokenPropertyPermission, CollectionLimitValue, CollectionLimitField, CollectionNestingAndPermission} from "@unique-nft/solidity-interfaces/contracts/CollectionHelpers.sol";
+import {SponsoringModeT} from "@unique-nft/solidity-interfaces/contracts/ContractHelpers.sol";
 import {EventConfig} from "./EventConfig.sol";
 import {IEventManager} from "./IEventManager.sol";
 
@@ -24,18 +25,18 @@ contract EventManager is CollectionMinter, TokenMinter, IEventManager {
     ) external payable {
         if (msg.value != s_collectionCreationFee) revert InvalidCreationFee();
 
-        // Set collection limits
-        CollectionLimitValue[] memory collectionLimits = new CollectionLimitValue[](2);
+        uint256 limitCount = _eventConfig.soulbound ? 2 : 1;
+        CollectionLimitValue[] memory collectionLimits = new CollectionLimitValue[](limitCount);
 
-        // Set account token ownership limit
         collectionLimits[0] = CollectionLimitValue({
             field: CollectionLimitField.AccountTokenOwnership,
             value: _eventConfig.accountLimit
         });
 
         // if soulbound transfers are not allowed
-        if (_eventConfig.soulbound)
+        if (_eventConfig.soulbound) {
             collectionLimits[1] = CollectionLimitValue({field: CollectionLimitField.TransferEnabled, value: 0});
+        }
 
         address collectionAddress = _createCollection(
             _name,

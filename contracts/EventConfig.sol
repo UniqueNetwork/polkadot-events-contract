@@ -17,5 +17,5 @@ struct EventConfig {
 using {inProgress} for EventConfig global;
 
 function inProgress(EventConfig memory _eventConfig) view returns (bool) {
-    return _eventConfig.startTimestamp >= block.timestamp && _eventConfig.endTimestamp <= block.timestamp;
+    return _eventConfig.startTimestamp <= block.timestamp && _eventConfig.endTimestamp >= block.timestamp;
 }

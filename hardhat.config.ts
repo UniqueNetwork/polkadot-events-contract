@@ -4,6 +4,9 @@ import "@nomicfoundation/hardhat-foundry";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.24",
+  paths: {
+    tests: "./tests",
+  },
   networks: {
     quick: {
       url: "https://rpc.web.uniquenetwork.dev",
@@ -16,7 +19,7 @@ const config: HardhatUserConfig = {
     },
   },
   mocha: {
-    require: ["mocha-steps"],
+    timeout: 500_000,
   },
 };
 

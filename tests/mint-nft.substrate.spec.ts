@@ -4,14 +4,11 @@ import { Address } from "@unique-nft/utils";
 import { test } from "mocha";
 import { viem } from "hardhat";
 import { encodeFunctionData } from "viem";
-import { expect } from "chai";
 import { createEvent, deployEventManager, mintNFT, TKN } from "./utils/helpers";
 
 test(`anyone can mint NFT using Substrate account for free`, async () => {
   const [owner] = await viem.getWalletClients();
   const EVENT_FEE = TKN(0);
-
-  const publicClient = await viem.getPublicClient();
 
   // owner creates EventManager
   const eventManager = await deployEventManager({
